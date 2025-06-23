@@ -1,60 +1,60 @@
-# Feedback System
+# Team Feedback Portal
 
-A lightweight internal feedback sharing system between managers and team members. Built with a React frontend and a modular Flask backend.
+A streamlined platform for sharing feedback between managers and employees. This project features a React-based user interface and a modular Flask backend for robust performance.
 
-## Features
+## Highlights
 
-### ✅ Core Features (MVP)
+### 🚀 Main Capabilities
 
-**Authentication & Roles**
-- Two user roles: Manager and Employee
-- Secure login system
-- Managers can only see their team members
+**User Roles & Security**
+- Two distinct roles: Manager and Employee
+- Secure authentication system
+- Managers have access only to their direct reports
 
-**Feedback Submission**
-- Managers can submit structured feedback for each team member:
+**Feedback Management**
+- Managers can provide structured feedback for each employee:
   - Strengths
-  - Areas to improve
+  - Areas for growth
   - Overall sentiment (positive/neutral/negative)
-- Multiple feedbacks per employee
-- History of feedback visible to both manager and employee
+- Multiple feedback entries per employee
+- Both managers and employees can view feedback history
 
-**Feedback Visibility**
-- Employees can see feedback they've received
-- Employees cannot see other employees' data
-- Managers can edit/update their past feedback
-- Employees can acknowledge feedback they have read
+**Access Control**
+- Employees see only their own feedback
+- Employees cannot access other users' data
+- Managers can revise their previous feedback
+- Employees can mark feedback as read
 
-**Dashboard**
-- Manager: team overview (feedback count, sentiment trends)
-- Employee: timeline of feedback received
+**Dashboards**
+- Managers: Team summary (feedback stats, sentiment analysis)
+- Employees: Chronological view of received feedback
 
-## Tech Stack
+## Technology Stack
 
 - **Frontend**: React 18 with React Router
-- **Backend**: Python Flask (modular structure with Blueprints and models)
+- **Backend**: Flask (Python) with Blueprints and SQLAlchemy
 - **Database**: SQLite
 - **Authentication**: Flask-Login
-- **Styling**: Custom CSS with modern design
+- **Styling**: Custom CSS for a modern look
 
-## Project Structure
+## Directory Overview
 
 ```
 feedback-system/
 ├── feedback-system-backend/
-│   ├── app.py              # Flask app setup (no routes or models)
+│   ├── app.py              # Flask app configuration
 │   ├── models.py           # Database models (User, Feedback)
-│   ├── routes.py           # All API route definitions (Blueprint)
-│   ├── seeder.py           # Script to seed the database with sample data
-│   ├── requirements.txt    # Python dependencies
-│   ├── Dockerfile          # Docker configuration
+│   ├── routes.py           # API endpoints (Blueprint)
+│   ├── seeder.py           # Script for populating sample data
+│   ├── requirements.txt    # Backend dependencies
+│   ├── Dockerfile          # Docker setup
 │   └── instance/
 │       └── feedback_system.db  # SQLite database file
 └── feedback-system-frontend/
     ├── public/
-    │   └── index.html      # Main HTML file
+    │   └── index.html      # Main HTML template
     ├── src/
-    │   ├── components/     # React components
+    │   ├── components/     # React UI components
     │   │   ├── Navbar.js
     │   │   ├── Login.js
     │   │   ├── Register.js
@@ -62,39 +62,39 @@ feedback-system/
     │   │   ├── FeedbackList.js
     │   │   ├── FeedbackForm.js
     │   │   └── FeedbackModal.js
-    │   ├── App.js          # Main App component
-    │   ├── index.js        # React entry point
+    │   ├── App.js          # Root React component
+    │   ├── index.js        # Entry point
     │   ├── index.css       # Global styles
     │   └── App.css         # App-specific styles
-    └── package.json        # Node.js dependencies
+    └── package.json        # Frontend dependencies
 ```
 
-## Setup Instructions
+## Getting Started
 
 ### Prerequisites
-- Python 3.9+
-- Node.js 16+
+- Python 3.9 or newer
+- Node.js 16 or above
 - npm or yarn
 
 ### Backend Setup
 
-1. Navigate to the backend directory:
+1. Move to the backend folder:
    ```bash
    cd feedback-system-backend
    ```
 
-2. Create and activate a virtual environment:
+2. Set up a virtual environment:
    ```bash
-   # Windows
+   # On Windows
    python -m venv venv
    venv\Scripts\activate
 
-   # macOS/Linux
+   # On macOS/Linux
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. Install backend dependencies:
    ```bash
    pip install -r requirements.txt
    ```
@@ -102,38 +102,38 @@ feedback-system/
 4. (Optional) Initialize the database:
    ```bash
    flask db upgrade
-   python seeder.py  # To add sample data
+   python seeder.py  # Populate with demo data
    ```
 
-5. Run the Flask application:
+5. Launch the Flask server:
    ```bash
    python app.py
    ```
 
-The backend will be available at `http://localhost:5000`
+The backend will be running at `http://localhost:5000`
 
 ### Frontend Setup
 
-1. Navigate to the frontend directory:
+1. Go to the frontend directory:
    ```bash
    cd feedback-system-frontend
    ```
 
-2. Install dependencies:
+2. Install frontend packages:
    ```bash
    npm install
    ```
 
-3. Start the development server:
+3. Start the React development server:
    ```bash
    npm start
    ```
 
 The frontend will be available at `http://localhost:3000`
 
-### Docker Setup (Optional)
+### Docker (Optional)
 
-To run the backend using Docker:
+To run the backend in a Docker container:
 
 ```bash
 cd feedback-system-backend
@@ -141,64 +141,70 @@ docker build -t feedback-system-backend .
 docker run -p 5000:5000 feedback-system-backend
 ```
 
-## Demo Accounts
+## Demo Credentials
 
-The system comes with pre-configured demo accounts:
+The following sample accounts are created by default:
 
-**Manager Account:**
-- Username: `manager1`
-- Password: `password123`
+**Manager:**
+- Username: `TheManager`
+- Email: `manager1@company.com`
+- Password: `@12345`
 
-**Employee Account:**
-- Username: `employee1`
-- Password: `password123`
+**Employee 1:**
+- Username: `Jack`
+- Email: `jack@company.com`
+- Password: `@123456`
 
-## API Endpoints
+**Employee 2:**
+- Username: `Alex`
+- Email: `Alex@company.com`
+- Password: `@1234567`
+
+## API Overview
 
 ### Authentication
-- `POST /api/register` - Register new user
-- `POST /api/login` - User login
-- `POST /api/logout` - User logout
+- `POST /api/register` — Create a new user
+- `POST /api/login` — User login
+- `POST /api/logout` — User logout
 
-### Users
-- `GET /api/users` - Get users (filtered by role)
+### User Management
+- `GET /api/users` — Retrieve users (role-based)
 
 ### Feedback
-- `GET /api/feedback` - Get feedback list
-- `POST /api/feedback` - Create new feedback
-- `PUT /api/feedback/<id>` - Update feedback
-- `POST /api/feedback/<id>/acknowledge` - Acknowledge feedback
+- `GET /api/feedback` — List feedback
+- `POST /api/feedback` — Submit feedback
+- `PUT /api/feedback/<id>` — Edit feedback
+- `POST /api/feedback/<id>/acknowledge` — Mark feedback as read
 
 ### Dashboard
-- `GET /api/dashboard` - Get dashboard data
+- `GET /api/dashboard` — Dashboard data
 
 ### Database
-- `POST /api/init-db` - Initialize database tables
+- `POST /api/init-db` — Set up database tables
 
-## Usage
+## How to Use
 
-1. **Login/Register**: Start by creating an account or using the demo accounts
-2. **Manager Dashboard**: View team overview and recent feedback
-3. **Give Feedback**: Managers can submit structured feedback for team members
-4. **View Feedback**: Both managers and employees can view feedback history
-5. **Edit Feedback**: Managers can edit their previous feedback
-6. **Acknowledge Feedback**: Employees can acknowledge they've read feedback
+1. **Sign Up or Log In:** Use demo accounts or register a new user
+2. **Manager Dashboard:** View your team and recent feedback
+3. **Submit Feedback:** Managers can provide feedback to employees
+4. **Review Feedback:** Both roles can see feedback history
+5. **Edit Feedback:** Managers can update their feedback
+6. **Acknowledge:** Employees can confirm they've read feedback
 
-## Security Features
+## Security Practices
 
-- Password hashing using Werkzeug
-- Role-based access control
+- Passwords are securely hashed
+- Role-based permissions
 - Session management with Flask-Login
-- CORS configuration for frontend-backend communication
+- CORS enabled for frontend-backend communication
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Fork this repository
+2. Create a new branch for your feature
+3. Make your changes and test thoroughly
+4. Open a pull request
 
 ## License
 
-This project is open source and available under the MIT License. 
+This project is licensed under the MIT License. 
