@@ -133,13 +133,20 @@ The frontend will be available at `http://localhost:3000`
 
 ### Docker (Optional)
 
-To run the backend in a Docker container:
+The backend Docker image now automatically applies database migrations and seeds the database with sample data before starting the Flask server.
+
+To build and run the backend in Docker:
 
 ```bash
-cd feedback-system-backend
+# Standard usage
 docker build -t feedback-system-backend .
 docker run -p 5000:5000 feedback-system-backend
+
+# If you encounter permission issues on Linux, add:
+docker run -p 5000:5000 --env FLASK_APP=app.py feedback-system-backend
 ```
+
+This will ensure your database is always up to date and pre-populated with demo users and feedback.
 
 ## Demo Credentials
 
