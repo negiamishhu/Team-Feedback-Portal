@@ -72,9 +72,7 @@ feedback-system/
 ## Getting Started
 
 ### Prerequisites
-- Python 3.9 or newer
-- Node.js 16 or above
-- npm or yarn
+- Python 3.9   
 
 ### Backend Setup
 
