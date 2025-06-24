@@ -10,7 +10,8 @@ import FeedbackForm from './components/FeedbackForm';
 import './App.css';
 
 // Set up axios defaults
-axios.defaults.baseURL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL;
+axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
     const checkAuth = async () => {
       try {
         // Initialize database if needed
-        await axios.post('/init-db');
+        await axios.post(`${API_URL}/init-db`);
         setLoading(false);
       } catch (error) {
         console.error('Error initializing database:', error);
