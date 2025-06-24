@@ -18,12 +18,13 @@ db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["https://team-feedback-portal.vercel.app"])
 
 from routes import routes
 
 app.register_blueprint(routes)
 
+ 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
