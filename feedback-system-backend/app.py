@@ -8,6 +8,9 @@ from datetime import datetime
 import os
 from flask_migrate import Migrate
 from models import User, Feedback
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:/Users/Public/Desktop/Mishuu/feedback-system/feedback-system-backend/instance/feedback_system.db'
@@ -18,7 +21,9 @@ db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+
+frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
+CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 from routes import routes
 
