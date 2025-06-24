@@ -13,7 +13,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:/Users/Public/Desktop/Mishuu/feedback-system/feedback-system-backend/instance/feedback_system.db'
+# Use environment variable for DB path, or default to a relative path
+db_path = os.environ.get('DATABASE_URL', 'sqlite:///instance/feedback_system.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'dev-secret-key'
 
