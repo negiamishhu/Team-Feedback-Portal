@@ -135,7 +135,17 @@ The frontend will be available at `http://localhost:3000`
 
 The backend Docker image now automatically applies database migrations and seeds the database with sample data before starting the Flask server.
 
-To build and run the backend in Docker:
+For production deployments, Gunicorn is included as a WSGI server for better performance and reliability. The recommended start command is:
+
+```bash
+# For production
+cd feedback-system-backend
+pip install -r requirements.txt
+# Start the app with Gunicorn
+gunicorn app:app
+```
+
+To build and run the backend in Docker (for development):
 
 ```bash
 # Standard usage
