@@ -28,6 +28,10 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+with app.app_context():
+    db.create_all()
+    # Optionally, call your seeder here
+
 frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
 CORS(app, origins=[frontend_origin], supports_credentials=True)
 
