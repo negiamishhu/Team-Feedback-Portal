@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import db, User, Feedback
+import os
 
 routes = Blueprint('routes', __name__)
 
@@ -187,5 +188,7 @@ def get_dashboard():
 # Initialize database
 @routes.route('/api/init-db', methods=['POST'])
 def init_database():
+    if os.environ.get("FLASK_ENV") == "production":
+        return jsonify({'error': 'Not allowed in production'}), 403
     db.create_all()
     return jsonify({'message': 'Database initialized successfully'}), 200 

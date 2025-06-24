@@ -22,8 +22,9 @@ function App() {
     // Check if user is logged in on app start
     const checkAuth = async () => {
       try {
-        // Initialize database if needed
-        await axios.post(`${API_URL}/init-db`);
+        if (process.env.NODE_ENV === "development") {
+          await axios.post(`${API_URL}/init-db`);
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error initializing database:', error);
