@@ -5,4 +5,8 @@ __pycache__/
 *.pyo
 *.pyd
 .env
+/feedback-system-backend/instance/feedback_system.db
 
+/feedback-system-backend/instance/*
+!/feedback-system-backend/instance/
+!/feedback-system-backend/instance/.gitkeep
