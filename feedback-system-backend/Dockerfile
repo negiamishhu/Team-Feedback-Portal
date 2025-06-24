@@ -10,9 +10,5 @@ COPY . .
 
 EXPOSE 5000
 
-# Run migrations and seeder before starting the app
-# RUN flask db upgrade
-# RUN python seeder.py
-
-CMD ["python", "app.py"] 
+CMD flask db upgrade && python seeder.py && python app.py 
 
