@@ -13,12 +13,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# Check if running in production (Render sets RENDER environment variable)
-if os.environ.get("RENDER") == "true" or os.environ.get("FLASK_ENV") == "production":
-    db_path = os.environ.get('DATABASE_URL', 'sqlite:////tmp/feedback_system.db')
-else:
-    db_path = os.environ.get('DATABASE_URL', 'sqlite:///instance/feedback_system.db')
-
+# Use environment variable for DB path, or default to a relative path
+db_path = os.environ.get('DATABASE_URL', 'sqlite:///instance/feedback_system.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'dev-secret-key'
@@ -27,10 +23,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-with app.app_context():
-    db.create_all()
-    # Optionally, call your seeder here
 
 frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
 CORS(app, origins=[frontend_origin], supports_credentials=True)
