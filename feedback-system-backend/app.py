@@ -24,8 +24,11 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
-CORS(app, origins=[frontend_origin], supports_credentials=True)
+# Allow both local and production frontends
+CORS(app, origins=[
+    "http://localhost:3000",
+    "https://team-feedback-portal.vercel.app"
+])
 
 from routes import routes
 
