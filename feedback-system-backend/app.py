@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from db import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
@@ -25,16 +25,22 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Allow both local and production frontends
-frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
-CORS(app, origins=[frontend_origin, "http://localhost:3000"])
+frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-portal.vercel.app')
+CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 from routes import routes
 
-app.register_blueprint(routes)
+app.register_blueprint(routes, url_prefix='/api')
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+@app.errorhandler(404)
+def not_found(e):
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Not found'}), 404
+    return e
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 

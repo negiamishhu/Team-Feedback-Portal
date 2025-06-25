@@ -16,7 +16,7 @@ const FeedbackList = ({ user }) => {
 
   const fetchFeedback = async () => {
     try {
-      const response = await axios.get('/feedback');
+      const response = await axios.get('/api/feedback');
       setFeedback(response.data.feedback);
     } catch (error) {
       setError('Failed to load feedback');
@@ -28,7 +28,7 @@ const FeedbackList = ({ user }) => {
 
   const handleAcknowledge = async (feedbackId) => {
     try {
-      await axios.post(`/feedback/${feedbackId}/acknowledge`);
+      await axios.post(`/api/feedback/${feedbackId}/acknowledge`);
       fetchFeedback(); // Refresh the list
     } catch (error) {
       console.error('Acknowledge error:', error);

@@ -8,7 +8,7 @@ import os
 routes = Blueprint('routes', __name__)
 
 # Authentication routes
-@routes.route('/api/register', methods=['POST'])
+@routes.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     if User.query.filter_by(username=data['username']).first():
@@ -25,7 +25,7 @@ def register():
     db.session.commit()
     return jsonify({'message': 'User registered successfully'}), 201
 
-@routes.route('/api/login', methods=['POST', 'OPTIONS'])
+@routes.route('/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
         # Flask-CORS will add the headers, just return a 204
@@ -46,14 +46,14 @@ def login():
         }), 200
     return jsonify({'error': 'Invalid credentials'}), 401
 
-@routes.route('/api/logout', methods=['POST'])
+@routes.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'}), 200
 
 # User management routes
-@routes.route('/api/users', methods=['GET'])
+@routes.route('/users', methods=['GET'])
 @login_required
 def get_users():
     if current_user.role == 'manager':
@@ -77,7 +77,7 @@ def get_users():
         }), 200
 
 # Feedback routes
-@routes.route('/api/feedback', methods=['POST'])
+@routes.route('/feedback', methods=['POST'])
 @login_required
 def create_feedback():
     if current_user.role != 'manager':
@@ -97,7 +97,7 @@ def create_feedback():
     db.session.commit()
     return jsonify({'message': 'Feedback created successfully', 'id': feedback.id}), 201
 
-@routes.route('/api/feedback/<int:feedback_id>', methods=['PUT'])
+@routes.route('/feedback/<int:feedback_id>', methods=['PUT'])
 @login_required
 def update_feedback(feedback_id):
     feedback = Feedback.query.get_or_404(feedback_id)
@@ -114,7 +114,7 @@ def update_feedback(feedback_id):
     db.session.commit()
     return jsonify({'message': 'Feedback updated successfully'}), 200
 
-@routes.route('/api/feedback/<int:feedback_id>/acknowledge', methods=['POST'])
+@routes.route('/feedback/<int:feedback_id>/acknowledge', methods=['POST'])
 @login_required
 def acknowledge_feedback(feedback_id):
     feedback = Feedback.query.get_or_404(feedback_id)
@@ -124,7 +124,7 @@ def acknowledge_feedback(feedback_id):
     db.session.commit()
     return jsonify({'message': 'Feedback acknowledged'}), 200
 
-@routes.route('/api/feedback', methods=['GET'])
+@routes.route('/feedback', methods=['GET'])
 @login_required
 def get_feedback():
     if current_user.role == 'manager':
@@ -148,7 +148,7 @@ def get_feedback():
     }), 200
 
 # Dashboard routes
-@routes.route('/api/dashboard', methods=['GET'])
+@routes.route('/dashboard', methods=['GET'])
 @login_required
 def get_dashboard():
     if current_user.role == 'manager':
@@ -186,12 +186,4 @@ def get_dashboard():
                 'created_at': f.created_at.isoformat(),
                 'acknowledged': f.acknowledged
             } for f in sorted(received_feedback, key=lambda x: x.created_at, reverse=True)[:5]]
-        }), 200
-
-# Initialize database
-@routes.route('/api/init-db', methods=['POST'])
-def init_database():
-    if os.environ.get("FLASK_ENV") == "production":
-        return jsonify({'error': 'Not allowed in production'}), 403
-    db.create_all()
-    return jsonify({'message': 'Database initialized successfully'}), 200 
+        }), 200 

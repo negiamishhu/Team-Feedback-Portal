@@ -23,7 +23,7 @@ function App() {
     const checkAuth = async () => {
       try {
         if (process.env.NODE_ENV === "development") {
-          await axios.post(`${API_URL}/init-db`);
+          await axios.post(`${API_URL}/api/init-db`);
         }
         setLoading(false);
       } catch (error) {
