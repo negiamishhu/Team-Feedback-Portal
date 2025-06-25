@@ -24,7 +24,7 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/login', formData);
+      const response = await axios.post('/api/login', formData);
       onLogin(response.data.user);
       navigate('/dashboard');
     } catch (error) {
