@@ -84,8 +84,9 @@ const Login = ({ onLogin }) => {
 
         <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
           <h4>Demo Accounts:</h4>
-          <p><strong>Manager:</strong> username: manager1, password: password123</p>
-          <p><strong>Employee:</strong> username: employee1, password: password123</p>
+          <p><strong>Manager:</strong> username: TheManager, password: @12345</p>
+          <p><strong>Employee:</strong> username: Jack, password: @123456</p>
+          <p><strong>Employee:</strong> username: Alex, password: @1234567</p>
         </div>
       </div>
     </div>
