@@ -18,6 +18,8 @@ db_path = os.environ.get('DATABASE_URL', 'sqlite:///D:/Users/Public/Desktop/Mish
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'dev-secret-key'
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 
 db.init_app(app)
 migrate = Migrate(app, db)
