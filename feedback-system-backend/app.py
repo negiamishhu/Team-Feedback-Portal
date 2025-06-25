@@ -25,10 +25,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Allow both local and production frontends
-CORS(app, origins=[
-    "http://localhost:3000",
-    "https://team-feedback-portal.vercel.app"
-])
+frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
+CORS(app, origins=[frontend_origin, "http://localhost:3000"])
 
 from routes import routes
 
