@@ -10,7 +10,7 @@ import FeedbackForm from './components/FeedbackForm';
 import './App.css';
 
 // Set up axios defaults
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
 
