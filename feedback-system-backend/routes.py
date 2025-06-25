@@ -28,7 +28,6 @@ def register():
 @routes.route('/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
-        # Flask-CORS will add the headers, just return a 204
         return '', 204
     data = request.get_json()
     user = User.query.filter_by(username=data['username']).first()
