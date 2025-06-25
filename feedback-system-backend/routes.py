@@ -25,7 +25,7 @@ def register():
     db.session.commit()
     return jsonify({'message': 'User registered successfully'}), 201
 
-@routes.route('/api/login', methods=['POST'])
+@routes.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
     data = request.get_json()
     user = User.query.filter_by(username=data['username']).first()
