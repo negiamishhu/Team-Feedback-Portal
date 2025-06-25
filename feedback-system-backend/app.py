@@ -29,6 +29,7 @@ frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-porta
 CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 print("Allowed CORS origins:", [frontend_origin])
+print("Running under:", os.environ.get("SERVER_SOFTWARE", "unknown"))
 
 from routes import routes
 
