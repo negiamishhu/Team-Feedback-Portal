@@ -51,7 +51,7 @@ def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'}), 200
 
-# User management routes
+
 @routes.route('/users', methods=['GET'])
 @login_required
 def get_users():
@@ -75,7 +75,7 @@ def get_users():
             }]
         }), 200
 
-# Feedback routes
+
 @routes.route('/feedback', methods=['POST'])
 @login_required
 def create_feedback():
