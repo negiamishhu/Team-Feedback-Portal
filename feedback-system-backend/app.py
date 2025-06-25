@@ -28,6 +28,8 @@ login_manager.init_app(app)
 frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-portal.vercel.app')
 CORS(app, origins=[frontend_origin], supports_credentials=True)
 
+print("Allowed CORS origins:", [frontend_origin])
+
 from routes import routes
 
 app.register_blueprint(routes, url_prefix='/api')
