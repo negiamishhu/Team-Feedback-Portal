@@ -17,7 +17,7 @@ app = Flask(__name__)
 db_path = os.environ.get('DATABASE_URL', 'sqlite:///D:/Users/Public/Desktop/Mishuu/new/Team-Feedback-Portal/feedback-system-backend/instance/feedback_system.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'dev-secret-key'
+app.config['SECRET_KEY'] = 'dev-secret-key' 
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -27,6 +27,8 @@ login_manager.init_app(app)
 # Allow both local and production frontends
 frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-portal.vercel.app')
 CORS(app, origins=[frontend_origin], supports_credentials=True)
+
+print("Allowed CORS origins:", [frontend_origin]) 
 
 from routes import routes
 
