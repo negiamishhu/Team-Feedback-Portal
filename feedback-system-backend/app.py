@@ -47,9 +47,7 @@ def not_found(e):
     if request.path.startswith('/api/'):
         return jsonify({'error': 'Not found'}), 404
     return e
-
-with app.app_context():
-    db.create_all()
+ 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 
