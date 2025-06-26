@@ -51,7 +51,7 @@ function App() {
     <Router>
       <div className="App">
         {user && <Navbar user={user} onLogout={logout} />}
-        <div className="container">
+        <div className=" ">
           <Routes>
             <Route 
               path="/login" 

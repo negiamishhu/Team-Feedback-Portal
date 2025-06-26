@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { 
+  Users, 
+  MessageSquare, 
+  TrendingUp, 
+  Clock, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Minus, 
+  Plus, 
+  Eye, 
+  CheckCircle, 
+  AlertCircle, 
+  Calendar,
+  Activity,
+  Target,
+  Award,
+  Zap
+} from 'lucide-react';
 
 const Dashboard = ({ user }) => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -24,101 +42,242 @@ const Dashboard = ({ user }) => {
   };
 
   if (loading) {
-    return <div className="loading">Loading dashboard...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="error">{error}</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
+        <div className="bg-red-500/20 backdrop-blur-lg rounded-2xl border border-red-500/50 p-8 text-center">
+          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <p className="text-red-200 text-lg">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1 style={{ marginBottom: '30px' }}>
-        Welcome, {user.username}!
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 px-60  py-20">
+       
+ 
+        <div className="mb-8 mt-8  ">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
+                  <Activity className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white mb-1">
+                    Welcome back, {user.username}!
+                  </h1>
+                  <p className="text-gray-300 capitalize">
+                    {user.role} Dashboard
+                  </p>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <span className="text-gray-300 text-sm">
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {user.role === 'manager' ? (
-        <ManagerDashboard data={dashboardData} />
-      ) : (
-        <EmployeeDashboard data={dashboardData} />
-      )}
+        {user.role === 'manager' ? (
+          <ManagerDashboard data={dashboardData} />
+        ) : (
+          <EmployeeDashboard data={dashboardData} />
+        )}
+      </div>
+  
+  );
+};
+
+const StatCard = ({ icon: Icon, value, label, color = "slate" }) => (
+  <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-2xl font-bold text-white mb-1">{value}</p>
+        <p className="text-gray-300 text-sm">{label}</p>
+      </div>
+      <div className={`w-12 h-12 bg-gradient-to-br from-${color}-600 to-${color}-700 rounded-lg flex items-center justify-center shadow-lg`}>
+        <Icon className="w-6 h-6 text-white" />
+      </div>
     </div>
+  </div>
+);
+
+const FeedbackItem = ({ feedback, isManager = false }) => {
+  const getSentimentIcon = (sentiment) => {
+    switch (sentiment) {
+      case 'positive': return <ThumbsUp className="w-4 h-4" />;
+      case 'negative': return <ThumbsDown className="w-4 h-4" />;
+      default: return <Minus className="w-4 h-4" />;
+    }
+  };
+
+  const getSentimentColor = (sentiment) => {
+    switch (sentiment) {
+      case 'positive': return 'bg-green-500/20 text-green-200 border-green-500/50';
+      case 'negative': return 'bg-red-500/20 text-red-200 border-red-500/50';
+      default: return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/50';
+    }
+  };
+
+  return (
+    <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 p-4 hover:bg-white/10 transition-all duration-200">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-md">
+            <Users className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <p className="text-white font-medium">
+              {isManager ? feedback.employee_name : `From: ${feedback.manager_name}`}
+            </p>
+            <div className="flex items-center space-x-2 text-xs text-gray-400">
+              <Calendar className="w-3 h-3" />
+              <span>{new Date(feedback.created_at).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className={`flex items-center space-x-1 px-2 py-1 rounded-md border text-xs font-medium ${getSentimentColor(feedback.sentiment)}`}>
+            {getSentimentIcon(feedback.sentiment)}
+            <span className="capitalize">{feedback.sentiment}</span>
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          {feedback.acknowledged ? (
+            <span className="flex items-center space-x-1 px-2 py-1 bg-green-500/20 text-green-200 border border-green-500/50 rounded-md text-xs font-medium">
+              <CheckCircle className="w-3 h-3" />
+              <span>Acknowledged</span>
+            </span>
+          ) : (
+            <span className="flex items-center space-x-1 px-2 py-1 bg-yellow-500/20 text-yellow-200 border border-yellow-500/50 rounded-md text-xs font-medium">
+              <Clock className="w-3 h-3" />
+              <span>Pending</span>
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ActionButton = ({ to, children, icon: Icon, variant = "primary" }) => {
+  const baseClasses = "flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg";
+  const variants = {
+    primary: "bg-gradient-to-r from-slate-600 to-gray-700 text-white hover:from-slate-700 hover:to-gray-800",
+    secondary: "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+  };
+
+  return (
+    <Link to={to} className={`${baseClasses} ${variants[variant]}`}>
+      {Icon && <Icon className="w-5 h-5 mr-2" />}
+      {children}
+    </Link>
   );
 };
 
 const ManagerDashboard = ({ data }) => {
   return (
-    <div>
-      <div className="dashboard-stats">
-        <div className="stat-card">
-          <div className="stat-number">{data.team_size}</div>
-          <div className="stat-label">Team Members</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{data.total_feedback}</div>
-          <div className="stat-label">Total Feedback Given</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{data.sentiment_counts.positive}</div>
-          <div className="stat-label">Positive Feedback</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{data.sentiment_counts.neutral}</div>
-          <div className="stat-label">Neutral Feedback</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{data.sentiment_counts.negative}</div>
-          <div className="stat-label">Negative Feedback</div>
-        </div>
+    <div className="space-y-8">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <StatCard 
+          icon={Users} 
+          value={data.team_size} 
+          label="Team Members" 
+          color="blue" 
+        />
+        <StatCard 
+          icon={MessageSquare} 
+          value={data.total_feedback} 
+          label="Total Feedback Given" 
+          color="slate" 
+        />
+        <StatCard 
+          icon={ThumbsUp} 
+          value={data.sentiment_counts.positive} 
+          label="Positive Feedback" 
+          color="green" 
+        />
+        <StatCard 
+          icon={Minus} 
+          value={data.sentiment_counts.neutral} 
+          label="Neutral Feedback" 
+          color="yellow" 
+        />
+        <StatCard 
+          icon={ThumbsDown} 
+          value={data.sentiment_counts.negative} 
+          label="Negative Feedback" 
+          color="red" 
+        />
       </div>
 
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3>Recent Feedback</h3>
-          <Link to="/feedback/new" className="btn btn-primary">
+      {/* Recent Feedback */}
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white">Recent Feedback</h3>
+          </div>
+          <ActionButton to="/feedback/new" icon={Plus}>
             Give New Feedback
-          </Link>
+          </ActionButton>
         </div>
 
         {data.recent_feedback.length === 0 ? (
-          <p>No feedback given yet. Start by giving feedback to your team members!</p>
+          <div className="text-center py-12">
+            <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-300 text-lg mb-2">No feedback given yet</p>
+            <p className="text-gray-400">Start by giving feedback to your team members!</p>
+          </div>
         ) : (
-          <div>
+          <div className="space-y-4">
             {data.recent_feedback.map((feedback) => (
-              <div key={feedback.id} className="feedback-item">
-                <div className="feedback-header">
-                  <div>
-                    <strong>{feedback.employee_name}</strong>
-                    <div className="feedback-meta">
-                      {new Date(feedback.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <span className={`sentiment-badge sentiment-${feedback.sentiment}`}>
-                    {feedback.sentiment}
-                  </span>
-                </div>
-                <div>
-                  {feedback.acknowledged ? (
-                    <span className="sentiment-badge sentiment-positive">Acknowledged</span>
-                  ) : (
-                    <span className="sentiment-badge sentiment-neutral">Pending</span>
-                  )}
-                </div>
-              </div>
+              <FeedbackItem key={feedback.id} feedback={feedback} isManager={true} />
             ))}
           </div>
         )}
       </div>
 
-      <div className="card">
-        <h3>Quick Actions</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/feedback/new" className="btn btn-primary">
+      {/* Quick Actions */}
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5 text-white" />
+          </div>
+          <h3 className="text-xl font-bold text-white">Quick Actions</h3>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <ActionButton to="/feedback/new" icon={Plus} variant="primary">
             Give New Feedback
-          </Link>
-          <Link to="/feedback" className="btn btn-secondary">
+          </ActionButton>
+          <ActionButton to="/feedback" icon={Eye} variant="secondary">
             View All Feedback
-          </Link>
+          </ActionButton>
         </div>
       </div>
     </div>
@@ -127,60 +286,63 @@ const ManagerDashboard = ({ data }) => {
 
 const EmployeeDashboard = ({ data }) => {
   return (
-    <div>
-      <div className="dashboard-stats">
-        <div className="stat-card">
-          <div className="stat-number">{data.total_feedback}</div>
-          <div className="stat-label">Total Feedback Received</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-number">{data.unacknowledged_count}</div>
-          <div className="stat-label">Unacknowledged</div>
-        </div>
+    <div className="space-y-8">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <StatCard 
+          icon={Award} 
+          value={data.total_feedback} 
+          label="Total Feedback Received" 
+          color="blue" 
+        />
+        <StatCard 
+          icon={AlertCircle} 
+          value={data.unacknowledged_count} 
+          label="Unacknowledged" 
+          color="yellow" 
+        />
       </div>
 
-      <div className="card">
-        <h3>Recent Feedback</h3>
+      {/* Recent Feedback */}
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg flex items-center justify-center">
+            <Target className="w-5 h-5 text-white" />
+          </div>
+          <h3 className="text-xl font-bold text-white">Recent Feedback</h3>
+        </div>
+
         {data.recent_feedback.length === 0 ? (
-          <p>No feedback received yet.</p>
+          <div className="text-center py-12">
+            <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-300 text-lg mb-2">No feedback received yet</p>
+            <p className="text-gray-400">Your manager will provide feedback soon!</p>
+          </div>
         ) : (
-          <div>
+          <div className="space-y-4">
             {data.recent_feedback.map((feedback) => (
-              <div key={feedback.id} className="feedback-item">
-                <div className="feedback-header">
-                  <div>
-                    <strong>From: {feedback.manager_name}</strong>
-                    <div className="feedback-meta">
-                      {new Date(feedback.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <span className={`sentiment-badge sentiment-${feedback.sentiment}`}>
-                    {feedback.sentiment}
-                  </span>
-                </div>
-                <div>
-                  {feedback.acknowledged ? (
-                    <span className="sentiment-badge sentiment-positive">Acknowledged</span>
-                  ) : (
-                    <span className="sentiment-badge sentiment-neutral">Pending</span>
-                  )}
-                </div>
-              </div>
+              <FeedbackItem key={feedback.id} feedback={feedback} isManager={false} />
             ))}
           </div>
         )}
       </div>
 
-      <div className="card">
-        <h3>Quick Actions</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <Link to="/feedback" className="btn btn-primary">
+      {/* Quick Actions */}
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-700 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5 text-white" />
+          </div>
+          <h3 className="text-xl font-bold text-white">Quick Actions</h3>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <ActionButton to="/feedback" icon={Eye} variant="primary">
             View All Feedback
-          </Link>
+          </ActionButton>
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
