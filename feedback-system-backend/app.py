@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 from flask_migrate import Migrate
-from models import User, Feedback
+from models import User, Feedback, FeedbackRequest
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,6 +47,9 @@ def not_found(e):
     if request.path.startswith('/api/'):
         return jsonify({'error': 'Not found'}), 404
     return e
+
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 
