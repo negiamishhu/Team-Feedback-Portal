@@ -33,7 +33,7 @@ const FeedbackModal = ({ feedback, onClose, onUpdate, isEditing }) => {
     setLoading(true);
 
     try {
-      await axios.put(`/api/feedback/${feedback.id}`, formData);
+      await axios.put(`/feedback/${feedback.id}`, formData);
       onUpdate();
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to update feedback');

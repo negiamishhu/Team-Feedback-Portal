@@ -21,7 +21,7 @@ const FeedbackForm = ({ user }) => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('/api/users');
+      const response = await axios.get('/users');
       setEmployees(response.data.users);
     } catch (error) {
       setError('Failed to load employees');
@@ -43,7 +43,7 @@ const FeedbackForm = ({ user }) => {
     setLoading(true);
 
     try {
-      await axios.post('/api/feedback', formData);
+      await axios.post('/feedback', formData);
       setSuccess('Feedback submitted successfully!');
       setTimeout(() => {
         navigate('/feedback');

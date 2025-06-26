@@ -7,7 +7,7 @@ const Navbar = ({ user, onLogout }) => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/logout');
+      await axios.post('/logout');
       onLogout();
       navigate('/login');
     } catch (error) {

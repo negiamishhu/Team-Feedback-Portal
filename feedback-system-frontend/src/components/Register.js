@@ -26,7 +26,7 @@ const Register = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      await axios.post('/api/register', formData);
+      await axios.post('/register', formData);
       // Auto-login after registration
       const loginResponse = await axios.post('/api/login', {
         username: formData.username,

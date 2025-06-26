@@ -13,7 +13,7 @@ const Dashboard = ({ user }) => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/api/dashboard', { withCredentials: true });
+      const response = await axios.get('/dashboard', { withCredentials: true });
       setDashboardData(response.data);
     } catch (error) {
       setError('Failed to load dashboard data');
