@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from models import db, User, Feedback
+from models import db, User, Feedback, FeedbackRequest
 import os
 
 routes = Blueprint('routes', __name__)
@@ -219,4 +219,36 @@ def assign_team():
             employee.manager_id = current_user.id
             updated.append(employee.id)
     db.session.commit()
-    return jsonify({'message': 'Team assigned successfully', 'assigned_employee_ids': updated}), 200 
+    return jsonify({'message': 'Team assigned successfully', 'assigned_employee_ids': updated}), 200
+
+@routes.route('/feedback-request', methods=['POST'])
+@login_required
+def request_feedback():
+    if current_user.role != 'employee':
+        return jsonify({'error': 'Only employees can request feedback'}), 403
+    data = request.get_json()
+    manager_id = current_user.manager_id
+    if not manager_id:
+        return jsonify({'error': 'No manager assigned'}), 400
+    req = FeedbackRequest(
+        employee_id=current_user.id,
+        manager_id=manager_id,
+        message=data.get('message', '')
+    )
+    db.session.add(req)
+    db.session.commit()
+    return jsonify({'message': 'Feedback request sent!'}), 201
+
+@routes.route('/feedback-requests', methods=['GET'])
+@login_required
+def get_feedback_requests():
+    if current_user.role != 'manager':
+        return jsonify({'error': 'Only managers can view feedback requests'}), 403
+    requests = FeedbackRequest.query.filter_by(manager_id=current_user.id, status='pending').all()
+    return jsonify({'requests': [{
+        'id': r.id,
+        'employee_id': r.employee_id,
+        'employee_name': User.query.get(r.employee_id).username,
+        'message': r.message,
+        'created_at': r.created_at.isoformat()
+    } for r in requests]})

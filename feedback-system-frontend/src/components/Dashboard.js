@@ -87,11 +87,21 @@ const Dashboard = ({ user }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 px-60  py-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 px-60 py-20">
+      {/* Manager-only team selection */}
       {user.role === 'manager' && team.length > 0 && (
         <div className="mb-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-4">Your Team</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white">Your Team</h2>
+              <Link
+                to="/feedback-requests"
+                className="flex items-center px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-yellow-600 to-yellow-700 text-white shadow hover:from-yellow-700 hover:to-yellow-800 transition-all duration-200"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Feedback Requests
+              </Link>
+            </div>
             <div className="flex flex-wrap gap-4">
               {team.map((employee) => (
                 <button
@@ -112,7 +122,9 @@ const Dashboard = ({ user }) => {
           </div>
         </div>
       )}
-      <div className="mb-8 mt-8  ">
+
+      {/* Welcome Header with integrated action button */}
+      <div className="mb-8 mt-8">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -128,20 +140,33 @@ const Dashboard = ({ user }) => {
                 </p>
               </div>
             </div>
-            <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <span className="text-gray-300 text-sm">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </span>
+            <div className="flex items-center space-x-4">
+              <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <span className="text-gray-300 text-sm">
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </span>
+              </div>
+              {/* Primary action button integrated into header */}
+              {user.role === 'employee' && (
+                <Link
+                  to="/request-feedback"
+                  className="flex items-center px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Request Feedback
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </div>
+
       {user.role === 'manager' ? (
         <ManagerDashboard 
           data={selectedEmployee && dashboardData ? {
@@ -335,8 +360,8 @@ const ManagerDashboard = ({ data }) => {
 const EmployeeDashboard = ({ data }) => {
   return (
     <div className="space-y-8">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Stats Grid with Request Feedback prominently displayed */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard 
           icon={Award} 
           value={data.total_feedback} 
@@ -349,6 +374,21 @@ const EmployeeDashboard = ({ data }) => {
           label="Unacknowledged" 
           color="yellow" 
         />
+        {/* Call-to-action card for requesting feedback */}
+        <div className="bg-gradient-to-br from-blue-600/20 to-blue-700/20 backdrop-blur-lg rounded-xl border border-blue-500/30 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+          <div className="text-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg mx-auto mb-3">
+              <Plus className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-white font-medium mb-2">Need Feedback?</p>
+            <Link
+              to="/request-feedback"
+              className="inline-flex items-center px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-sm"
+            >
+              Request Now
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Recent Feedback */}
@@ -364,7 +404,14 @@ const EmployeeDashboard = ({ data }) => {
           <div className="text-center py-12">
             <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-300 text-lg mb-2">No feedback received yet</p>
-            <p className="text-gray-400">Your manager will provide feedback soon!</p>
+            <p className="text-gray-400 mb-4">Your manager will provide feedback soon!</p>
+            <Link
+              to="/request-feedback"
+              className="inline-flex items-center px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Request Feedback
+            </Link>
           </div>
         ) : (
           <div className="space-y-4">
@@ -384,7 +431,10 @@ const EmployeeDashboard = ({ data }) => {
           <h3 className="text-xl font-bold text-white">Quick Actions</h3>
         </div>
         <div className="flex flex-wrap gap-4">
-          <ActionButton to="/feedback" icon={Eye} variant="primary">
+          <ActionButton to="/request-feedback" icon={Plus} variant="primary">
+            Request Feedback
+          </ActionButton>
+          <ActionButton to="/feedback" icon={Eye} variant="secondary">
             View All Feedback
           </ActionButton>
         </div>

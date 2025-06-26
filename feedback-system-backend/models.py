@@ -26,4 +26,13 @@ class Feedback(db.Model):
     sentiment = db.Column(db.String(20), nullable=False)  # 'positive', 'neutral', 'negative'
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    acknowledged = db.Column(db.Boolean, default=False) 
+    acknowledged = db.Column(db.Boolean, default=False)
+
+# FeedbackRequest model for employees to request feedback from their manager
+class FeedbackRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    manager_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending')  # pending, completed, rejected 

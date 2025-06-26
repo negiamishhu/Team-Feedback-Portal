@@ -8,6 +8,8 @@ import Dashboard from './components/Dashboard';
 import FeedbackList from './components/FeedbackList';
 import FeedbackForm from './components/FeedbackForm';
 import TeamPicker from './components/TeamPicker';
+import RequestFeedback from './components/RequestFeedback';
+import FeedbackRequests from './components/FeedbackRequests';
 import './App.css';
 
 // Set up axios defaults
@@ -77,6 +79,14 @@ function App() {
             <Route 
               path="/team-picker" 
               element={<TeamPicker />} 
+            />
+            <Route 
+              path="/request-feedback" 
+              element={<RequestFeedback />} 
+            />
+            <Route 
+              path="/feedback-requests" 
+              element={<FeedbackRequests />} 
             />
             <Route 
               path="/" 

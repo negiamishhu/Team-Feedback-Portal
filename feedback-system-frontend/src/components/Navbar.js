@@ -49,7 +49,7 @@ const Navbar = ({ user, onLogout }) => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-white/10 shadow-2xl">
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex items-center justify-between h-24">
-            {/* Logo/Brand */}
+ 
             <Link 
               to="/dashboard" 
               className="flex items-center space-x-2 text-white font-bold text-xl hover:text-slate-300 transition-colors duration-200 group"
@@ -60,8 +60,7 @@ const Navbar = ({ user, onLogout }) => {
               <span className="hidden sm:block">Feedback System</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-2">
+             <div className="hidden md:flex items-center space-x-2">
               <NavLink to="/dashboard" icon={Home}>
                 Dashboard
               </NavLink>
@@ -71,19 +70,13 @@ const Navbar = ({ user, onLogout }) => {
               </NavLink>
               
               {user.role === 'manager' && (
-                <>
-                  <NavLink to="/feedback/new" icon={Plus}>
-                    New Feedback
-                  </NavLink>
-                  <NavLink to="/team-picker" icon={Users}>
-                    Pick Team
-                  </NavLink>
-                </>
+                <NavLink to="/feedback/new" icon={Plus}>
+                  New Feedback
+                </NavLink>
               )}
             </div>
 
-            {/* User Info & Logout - Desktop */}
-            <div className="hidden md:flex items-center space-x-4">
+             <div className="hidden md:flex items-center space-x-4">
               {/* User Badge */}
               <div className="flex items-center px-3 py-2 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
                 <div className="w-8 h-8 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center mr-3 shadow-md">
@@ -109,24 +102,13 @@ const Navbar = ({ user, onLogout }) => {
               </button>
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={toggleMobileMenu}
-              className="md:hidden flex items-center justify-center w-10 h-10 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5 text-white" />
-              ) : (
-                <Menu className="w-5 h-5 text-white" />
-              )}
-            </button>
+            
           </div>
         </div>
  
       </nav>
 
-      {/* Spacer to prevent content from going under fixed navbar */}
-      <div className="h-16"></div>
+       <div className="h-16"></div>
     </>
   );
 };
