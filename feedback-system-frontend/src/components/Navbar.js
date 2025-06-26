@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Home, 
   MessageSquare, 
-  Plus, 
-  User, 
-  LogOut, 
-  Menu, 
-  X, 
+  Plus,
+  LogOut,  
   Shield, 
   Users,
   Sparkles
 } from 'lucide-react';
 
 const Navbar = ({ user, onLogout }) => {
-  const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate(); 
 
   const handleLogout = async () => {
     try {
@@ -26,11 +22,7 @@ const Navbar = ({ user, onLogout }) => {
     } catch (error) {
       console.error('Logout error:', error);
     }
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  }; 
 
   const NavLink = ({ to, children, icon: Icon, onClick }) => (
     <Link
@@ -72,6 +64,12 @@ const Navbar = ({ user, onLogout }) => {
               {user.role === 'manager' && (
                 <NavLink to="/feedback/new" icon={Plus}>
                   New Feedback
+                </NavLink>
+              )}
+
+              {user.role === 'manager' && (
+                <NavLink to="/team-picker" icon={Users}>
+                  Pick Your Team
                 </NavLink>
               )}
             </div>

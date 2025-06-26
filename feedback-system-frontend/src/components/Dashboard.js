@@ -32,7 +32,7 @@ const Dashboard = ({ user }) => {
     if (user.role === 'manager') {
       fetchTeam();
     }
-  }, []);
+  }, [user.role]);
 
   const fetchDashboardData = async (employeeId = null) => {
     setLoading(true);

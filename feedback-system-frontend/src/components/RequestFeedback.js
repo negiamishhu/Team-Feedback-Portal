@@ -6,10 +6,7 @@ import {
   CheckCircle, 
   User,
   MessageCircle,
-  ArrowRight,
-  Sparkles,
-  Target,
-  Clock
+  ArrowRight
 } from 'lucide-react';
 import axios from 'axios';
 
