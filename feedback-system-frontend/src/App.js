@@ -7,6 +7,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import FeedbackList from './components/FeedbackList';
 import FeedbackForm from './components/FeedbackForm';
+import TeamPicker from './components/TeamPicker';
 import './App.css';
 
 // Set up axios defaults
@@ -72,6 +73,10 @@ function App() {
             <Route 
               path="/feedback/new" 
               element={user ? <FeedbackForm user={user} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/team-picker" 
+              element={<TeamPicker />} 
             />
             <Route 
               path="/" 

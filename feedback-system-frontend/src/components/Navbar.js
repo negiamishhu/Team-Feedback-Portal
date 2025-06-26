@@ -71,9 +71,14 @@ const Navbar = ({ user, onLogout }) => {
               </NavLink>
               
               {user.role === 'manager' && (
-                <NavLink to="/feedback/new" icon={Plus}>
-                  New Feedback
-                </NavLink>
+                <>
+                  <NavLink to="/feedback/new" icon={Plus}>
+                    New Feedback
+                  </NavLink>
+                  <NavLink to="/team-picker" icon={Users}>
+                    Pick Team
+                  </NavLink>
+                </>
               )}
             </div>
 

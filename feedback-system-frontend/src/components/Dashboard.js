@@ -24,14 +24,24 @@ const Dashboard = ({ user }) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [team, setTeam] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
+    if (user.role === 'manager') {
+      fetchTeam();
+    }
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (employeeId = null) => {
+    setLoading(true);
     try {
-      const response = await axios.get('/dashboard', { withCredentials: true });
+      let url = '/dashboard';
+      if (employeeId) {
+        url = `/dashboard?employee_id=${employeeId}`;
+      }
+      const response = await axios.get(url, { withCredentials: true });
       setDashboardData(response.data);
     } catch (error) {
       setError('Failed to load dashboard data');
@@ -39,6 +49,19 @@ const Dashboard = ({ user }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchTeam = async () => {
+    try {
+      const response = await axios.get('/users', { withCredentials: true });
+      setTeam(response.data.users);
+    } catch (error) {
+      console.error('Failed to fetch team:', error);
+    }
+  };
+
+  const handleEmployeeSelect = (employee) => {
+    setSelectedEmployee(employee);
   };
 
   if (loading) {
@@ -65,46 +88,71 @@ const Dashboard = ({ user }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 px-60  py-20">
-       
- 
-        <div className="mb-8 mt-8  ">
+      {user.role === 'manager' && team.length > 0 && (
+        <div className="mb-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
-                  <Activity className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-1">
-                    Welcome back, {user.username}!
-                  </h1>
-                  <p className="text-gray-300 capitalize">
-                    {user.role} Dashboard
-                  </p>
-                </div>
-              </div>
-              <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
-                <Calendar className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-300 text-sm">
-                  {new Date().toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </span>
-              </div>
+            <h2 className="text-xl font-bold text-white mb-4">Your Team</h2>
+            <div className="flex flex-wrap gap-4">
+              {team.map((employee) => (
+                <button
+                  key={employee.id}
+                  onClick={() => handleEmployeeSelect(employee)}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg border border-white/20 ${selectedEmployee && selectedEmployee.id === employee.id ? 'bg-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                >
+                  {employee.username} <span className="text-xs text-gray-300 ml-2">({employee.email})</span>
+                </button>
+              ))}
+              <button
+                onClick={() => setSelectedEmployee(null)}
+                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg border border-white/20 ${!selectedEmployee ? 'bg-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              >
+                Show All
+              </button>
             </div>
           </div>
         </div>
-
-        {user.role === 'manager' ? (
-          <ManagerDashboard data={dashboardData} />
-        ) : (
-          <EmployeeDashboard data={dashboardData} />
-        )}
+      )}
+      <div className="mb-8 mt-8  ">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-slate-600 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
+                <Activity className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-1">
+                  Welcome back, {user.username}!
+                </h1>
+                <p className="text-gray-300 capitalize">
+                  {user.role} Dashboard
+                </p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+              <Calendar className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-300 text-sm">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-  
+      {user.role === 'manager' ? (
+        <ManagerDashboard 
+          data={selectedEmployee && dashboardData ? {
+            ...dashboardData,
+            recent_feedback: dashboardData.recent_feedback.filter(f => f.employee_name === selectedEmployee.username),
+          } : dashboardData} 
+        />
+      ) : (
+        <EmployeeDashboard data={dashboardData} />
+      )}
+    </div>
   );
 };
 

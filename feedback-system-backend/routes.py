@@ -185,4 +185,38 @@ def get_dashboard():
                 'created_at': f.created_at.isoformat(),
                 'acknowledged': f.acknowledged
             } for f in sorted(received_feedback, key=lambda x: x.created_at, reverse=True)[:5]]
-        }), 200 
+        }), 200
+
+@routes.route('/all-employees', methods=['GET'])
+@login_required
+def get_all_employees():
+    if current_user.role != 'manager':
+        return jsonify({'error': 'Only managers can view all employees'}), 403
+    employees = User.query.filter_by(role='employee').all()
+    return jsonify({
+        'employees': [{
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'role': user.role,
+            'manager_id': user.manager_id
+        } for user in employees]
+    }), 200
+
+@routes.route('/assign-team', methods=['POST'])
+@login_required
+def assign_team():
+    if current_user.role != 'manager':
+        return jsonify({'error': 'Only managers can assign team members'}), 403
+    data = request.get_json()
+    employee_ids = data.get('employee_ids', [])
+    if not isinstance(employee_ids, list):
+        return jsonify({'error': 'employee_ids must be a list'}), 400
+    updated = []
+    for emp_id in employee_ids:
+        employee = User.query.filter_by(id=emp_id, role='employee').first()
+        if employee:
+            employee.manager_id = current_user.id
+            updated.append(employee.id)
+    db.session.commit()
+    return jsonify({'message': 'Team assigned successfully', 'assigned_employee_ids': updated}), 200 
