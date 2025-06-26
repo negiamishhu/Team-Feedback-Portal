@@ -10,7 +10,7 @@ import FeedbackForm from './components/FeedbackForm';
 import './App.css';
 
 // Set up axios defaults
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
 
@@ -23,7 +23,7 @@ function App() {
     const checkAuth = async () => {
       try {
         if (process.env.NODE_ENV === "development") {
-          await axios.post(`${API_URL}/api/init-db`);
+          await axios.post(`${API_URL}/init-db`);
         }
         setLoading(false);
       } catch (error) {
