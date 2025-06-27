@@ -1,5 +1,25 @@
 # Team Feedback Portal
 
+[![Live Demo](https://img.shields.io/badge/Live%20App-Open%20Now-brightgreen?style=for-the-badge)](https://team-feedback-portal.vercel.app/)
+
+## Quickstart
+
+### Backend (Flask)
+```bash
+cd feedback-system-backend
+python -m venv venv
+venv\Scripts\activate  
+pip install -r requirements.txt
+python app.py
+```
+
+### Frontend (React)
+```bash
+cd feedback-system-frontend
+npm install
+npm start
+```
+
 A streamlined platform for sharing feedback between managers and employees. This project features a React-based user interface and a modular Flask backend for robust performance.
 
 ## Highlights
@@ -161,18 +181,15 @@ This will ensure your database is always up to date and pre-populated with demo 
 The following sample accounts are created by default:
 
 **Manager:**
-- Username: `TheManager`
-- Email: `manager1@company.com`
+- Username: `TheManager` 
 - Password: `@12345`
 
 **Employee 1:**
-- Username: `Jack`
-- Email: `jack@company.com`
+- Username: `Jack` 
 - Password: `@123456`
 
 **Employee 2:**
-- Username: `Alex`
-- Email: `Alex@company.com`
+- Username: `Alex` 
 - Password: `@1234567`
 
 ## API Overview
@@ -222,4 +239,28 @@ The following sample accounts are created by default:
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.
+
+## Docker Usage
+
+### Development
+```bash
+docker build -t feedback-system-backend .
+docker run -p 5000:5000 feedback-system-backend
+```
+
+### Production
+```bash
+docker build -t feedback-system-backend .
+docker run -p 5000:5000 -e FLASK_ENV=production feedback-system-backend
+# The container will run migrations, seed the database, and start with Gunicorn.
+```
+
+## .dockerignore (Recommended)
+```
+venv/
+__pycache__/
+*.pyc
+instance/
+migrations/
+``` 

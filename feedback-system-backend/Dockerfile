@@ -10,5 +10,12 @@ COPY . .
 
 EXPOSE 5000
 
-CMD flask db upgrade && python seeder.py && python app.py 
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+
+# For development (with seeding and migrations)
+CMD flask db upgrade && python seeder.py && python app.py
+
+# For production, you might use:
+# CMD flask db upgrade && python seeder.py && gunicorn app:app --bind 0.0.0.0:5000
 
