@@ -13,7 +13,7 @@ import FeedbackRequests from './components/FeedbackRequests';
 import './App.css';
 
 // Set up axios defaults
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
 
@@ -26,7 +26,7 @@ function App() {
     const checkAuth = async () => {
       try {
         if (process.env.NODE_ENV === "development") {
-          await axios.post(`${API_URL}/init-db`);
+          await axios.post('/init-db');
         }
         setLoading(false);
       } catch (error) {
