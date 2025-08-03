@@ -6,30 +6,46 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
-from flask_migrate import Migrate
 from models import User, Feedback, FeedbackRequest
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
-# Use environment variable for DB path, or default to a relative path
-db_path = os.environ.get('DATABASE_URL', 'sqlite:///D:/Users/Public/Desktop/Mishuu/new/Team-Feedback-Portal/feedback-system-backend/instance/feedback_system.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = db_path
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'dev-secret-key'
 
-# Add these for production cross-site cookies
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-app.config['SESSION_COOKIE_SECURE'] = True
+# Database configuration for production
+if os.environ.get('DATABASE_URL'):
+    # Production: Use PostgreSQL from environment variable
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+else:
+    # Development: Use SQLite with relative path
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
+
+# Production settings
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    app.config['SESSION_COOKIE_SECURE'] = True
+else:
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SECURE'] = False
 
 db.init_app(app)
-migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# Allow both local and production frontends
-frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-portal.vercel.app')
+# Initialize database tables
+with app.app_context():
+    try:
+        db.create_all()
+        print("Database tables created successfully")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+
+# CORS configuration
+frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
 CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 print("Allowed CORS origins:", [frontend_origin])
@@ -47,7 +63,7 @@ def not_found(e):
     if request.path.startswith('/api/'):
         return jsonify({'error': 'Not found'}), 404
     return e
- 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port) 
