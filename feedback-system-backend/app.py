@@ -15,7 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Database configuration for production
-if os.environ.get('DATABASE_URL'):
+if os.environ.get('DATABASE_URL') and 'postgresql' in os.environ.get('DATABASE_URL', ''):
     # Production: Use PostgreSQL from environment variable
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 else:

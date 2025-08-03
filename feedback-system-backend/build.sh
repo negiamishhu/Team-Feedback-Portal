@@ -3,12 +3,8 @@
 # Install dependencies
 pip install -r requirements.txt
 
-# Fix migration issues
-echo "Fixing migration issues..."
-python fix_migrations.py
-
-# Run migrations
-echo "Running database migrations..."
-alembic upgrade head
+# Setup database
+echo "Setting up database..."
+python setup_db.py
 
 echo "Build completed successfully!" 
