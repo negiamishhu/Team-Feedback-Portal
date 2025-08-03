@@ -6,6 +6,7 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from flask_migrate import Migrate
 from models import User, Feedback, FeedbackRequest
 from dotenv import load_dotenv
 
@@ -33,6 +34,7 @@ else:
     app.config['SESSION_COOKIE_SECURE'] = False
 
 db.init_app(app)
+migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 

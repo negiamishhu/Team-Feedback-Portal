@@ -1,8 +1,8 @@
-"""Initial database schema
+"""Initial schema
 
-Revision ID: 468ac6139659
+Revision ID: eb222ac90204
 Revises: 
-Create Date: 2025-08-03 20:32:03.523496
+Create Date: 2025-08-03 21:00:00.000000
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '468ac6139659'
+revision: str = 'eb222ac90204'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -68,4 +68,4 @@ def downgrade() -> None:
     """Downgrade schema."""
     op.drop_table('feedback_request')
     op.drop_table('feedback')
-    op.drop_table('user')
+    op.drop_table('user') 
