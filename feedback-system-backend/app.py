@@ -46,7 +46,7 @@ def setup_database():
                 print(f"Current migration version: {current_version}")
                 
                 # If the version doesn't match our current migration, reset it
-                if current_version and current_version != 'b5c0efbb251c':
+                if current_version and current_version != 'feb3bc8f6122':
                     print(f"Migration version mismatch. Clearing old version: {current_version}")
                     db.session.execute(text('DELETE FROM alembic_version'))
                     db.session.commit()
@@ -60,7 +60,7 @@ def setup_database():
             
             # Stamp with current migration head
             try:
-                db.session.execute(text("INSERT INTO alembic_version (version_num) VALUES ('b5c0efbb251c') ON CONFLICT (version_num) DO NOTHING"))
+                db.session.execute(text("INSERT INTO alembic_version (version_num) VALUES ('feb3bc8f6122') ON CONFLICT (version_num) DO NOTHING"))
                 db.session.commit()
                 print("✓ Migration state updated")
             except Exception as e:
