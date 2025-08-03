@@ -47,6 +47,12 @@ login_manager.init_app(app)
 # Initialize database tables
 with app.app_context():
     try:
+        # Create instance directory if it doesn't exist
+        import os
+        from pathlib import Path
+        instance_dir = Path("instance")
+        instance_dir.mkdir(exist_ok=True)
+        
         db.create_all()
         print("Database tables created successfully")
     except Exception as e:
