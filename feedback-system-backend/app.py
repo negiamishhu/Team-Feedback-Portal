@@ -16,8 +16,14 @@ app = Flask(__name__)
 
 # Database configuration for production
 if os.environ.get('DATABASE_URL') and 'postgresql' in os.environ.get('DATABASE_URL', ''):
-    # Production: Use PostgreSQL from environment variable
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    # Check if psycopg2 is available for PostgreSQL
+    try:
+        import psycopg2
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    except ImportError:
+        # Fallback to SQLite if psycopg2 is not available
+        print("PostgreSQL URL provided but psycopg2 not available, using SQLite")
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
 else:
     # Development: Use SQLite with relative path
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
