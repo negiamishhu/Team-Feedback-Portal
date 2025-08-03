@@ -9,7 +9,6 @@ import os
 from flask_migrate import Migrate
 from models import User, Feedback, FeedbackRequest
 from dotenv import load_dotenv
-from sqlalchemy import text
 
 load_dotenv()
 
@@ -34,43 +33,6 @@ frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'https://team-feedback-porta
 CORS(app, origins=[frontend_origin], supports_credentials=True)
 
 print("Allowed CORS origins:", [frontend_origin])
-
-def setup_database():
-    """Setup database tables and handle migration state"""
-    with app.app_context():
-        try:
-            # Check if alembic_version table exists and has data
-            try:
-                result = db.session.execute(text("SELECT version_num FROM alembic_version LIMIT 1"))
-                current_version = result.scalar()
-                print(f"Current migration version: {current_version}")
-                
-                # If the version doesn't match our current migration, reset it
-                if current_version and current_version != 'feb3bc8f6122':
-                    print(f"Migration version mismatch. Clearing old version: {current_version}")
-                    db.session.execute(text('DELETE FROM alembic_version'))
-                    db.session.commit()
-                    print("✓ Cleared old migration version")
-            except Exception as e:
-                print(f"No alembic_version table or error: {e}")
-            
-            # Create tables if they don't exist
-            db.create_all()
-            print("✓ Database tables ready")
-            
-            # Stamp with current migration head
-            try:
-                db.session.execute(text("INSERT INTO alembic_version (version_num) VALUES ('feb3bc8f6122') ON CONFLICT (version_num) DO NOTHING"))
-                db.session.commit()
-                print("✓ Migration state updated")
-            except Exception as e:
-                print(f"Migration stamping completed: {e}")
-                
-        except Exception as e:
-            print(f"Database setup error: {e}")
-
-# Setup database on app startup
-setup_database()
 
 from routes import routes
 
