@@ -48,17 +48,74 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# Initialize database tables
+# Initialize database tables and seed data
 with app.app_context():
     try:
         # Create instance directory if it doesn't exist
         import os
         from pathlib import Path
+        from werkzeug.security import generate_password_hash
+
         instance_dir = Path("instance")
         instance_dir.mkdir(exist_ok=True)
-        
+
         db.create_all()
         print("Database tables created successfully")
+
+        # Seed database if empty
+        if not User.query.first():
+            print("Seeding database with initial data...")
+
+            # Create a manager
+            manager = User(
+                username='TheManager',
+                email='manager1@company.com',
+                password_hash=generate_password_hash('@12345'),
+                role='manager'
+            )
+            db.session.add(manager)
+            db.session.commit()
+
+            # Create employees
+            employee1 = User(
+                username='Jack',
+                email='jack@company.com',
+                password_hash=generate_password_hash('@123456'),
+                role='employee',
+                manager_id=manager.id
+            )
+            employee2 = User(
+                username='Alex',
+                email='Alex@company.com',
+                password_hash=generate_password_hash('@1234567'),
+                role='employee',
+                manager_id=manager.id
+            )
+            db.session.add_all([employee1, employee2])
+            db.session.commit()
+
+            # Create sample feedback
+            feedback1 = Feedback(
+                manager_id=manager.id,
+                employee_id=employee1.id,
+                strengths='Great communication skills and team collaboration',
+                areas_to_improve='Could work on time management',
+                sentiment='positive'
+            )
+            feedback2 = Feedback(
+                manager_id=manager.id,
+                employee_id=employee2.id,
+                strengths='Excellent technical skills',
+                areas_to_improve='Needs to improve documentation',
+                sentiment='neutral'
+            )
+            db.session.add_all([feedback1, feedback2])
+            db.session.commit()
+
+            print("Database seeded successfully with sample data")
+        else:
+            print("Database already contains data, skipping seeding")
+
     except Exception as e:
         print(f"Database initialization error: {e}")
 

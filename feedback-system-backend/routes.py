@@ -13,7 +13,7 @@ def init_db():
     try:
         # Create all tables
         db.create_all()
-        
+
         # Check if we need to seed the database
         if not User.query.first():
             # Create a manager
@@ -61,13 +61,72 @@ def init_db():
             )
             db.session.add_all([feedback1, feedback2])
             db.session.commit()
-            
+
             return jsonify({'message': 'Database initialized and seeded successfully'}), 200
         else:
             return jsonify({'message': 'Database already initialized'}), 200
-            
+
     except Exception as e:
         return jsonify({'error': f'Database initialization failed: {str(e)}'}), 500
+
+# Manual seeding endpoint
+@routes.route('/seed-db', methods=['POST'])
+def seed_db():
+    try:
+        # Check if database is already seeded
+        if User.query.first():
+            return jsonify({'message': 'Database already contains data'}), 200
+
+        # Create a manager
+        manager = User(
+            username='TheManager',
+            email='manager1@company.com',
+            password_hash=generate_password_hash('@12345'),
+            role='manager'
+        )
+        db.session.add(manager)
+        db.session.commit()
+
+        # Create employees
+        employee1 = User(
+            username='Jack',
+            email='jack@company.com',
+            password_hash=generate_password_hash('@123456'),
+            role='employee',
+            manager_id=manager.id
+        )
+        employee2 = User(
+            username='Alex',
+            email='Alex@company.com',
+            password_hash=generate_password_hash('@1234567'),
+            role='employee',
+            manager_id=manager.id
+        )
+        db.session.add_all([employee1, employee2])
+        db.session.commit()
+
+        # Create sample feedback
+        feedback1 = Feedback(
+            manager_id=manager.id,
+            employee_id=employee1.id,
+            strengths='Great communication skills and team collaboration',
+            areas_to_improve='Could work on time management',
+            sentiment='positive'
+        )
+        feedback2 = Feedback(
+            manager_id=manager.id,
+            employee_id=employee2.id,
+            strengths='Excellent technical skills',
+            areas_to_improve='Needs to improve documentation',
+            sentiment='neutral'
+        )
+        db.session.add_all([feedback1, feedback2])
+        db.session.commit()
+
+        return jsonify({'message': 'Database seeded successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': f'Database seeding failed: {str(e)}'}), 500
 
 # Authentication routes
 @routes.route('/register', methods=['POST'])
