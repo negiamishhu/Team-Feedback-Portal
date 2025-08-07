@@ -16,10 +16,11 @@ app = Flask(__name__)
 
 # Database configuration for production
 database_url = os.environ.get('DATABASE_URL')
-if database_url and 'postgresql' in database_url:
+if database_url and ('postgresql' in database_url or 'postgres' in database_url):
     # Fix for Render/Heroku postgres URLs that use postgres:// instead of postgresql://
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     print("Using PostgreSQL database")
 else:
