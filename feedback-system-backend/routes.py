@@ -148,23 +148,51 @@ def register():
 
 @routes.route('/login', methods=['POST', 'OPTIONS'])
 def login():
-    if request.method == 'OPTIONS':
-        return '', 204
-    data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
-    if user and check_password_hash(user.password_hash, data['password']):
-        login_user(user)
-        return jsonify({
-            'message': 'Login successful',
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'role': user.role,
-                'manager_id': user.manager_id
-            }
-        }), 200
-    return jsonify({'error': 'Invalid credentials'}), 401
+    try:
+        if request.method == 'OPTIONS':
+            return '', 204
+
+        # Check if request has JSON data
+        if not request.is_json:
+            return jsonify({'error': 'Request must be JSON'}), 400
+
+        data = request.get_json()
+
+        # Validate required fields
+        if not data or 'username' not in data or 'password' not in data:
+            return jsonify({'error': 'Username and password are required'}), 400
+
+        print(f"Login attempt for username: {data['username']}")
+
+        user = User.query.filter_by(username=data['username']).first()
+
+        if user:
+            print(f"User found: {user.username}, checking password...")
+            if check_password_hash(user.password_hash, data['password']):
+                login_user(user)
+                print(f"Login successful for user: {user.username}")
+                return jsonify({
+                    'message': 'Login successful',
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'role': user.role,
+                        'manager_id': user.manager_id
+                    }
+                }), 200
+            else:
+                print("Password check failed")
+        else:
+            print(f"User not found: {data['username']}")
+
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error'}), 500
 
 @routes.route('/logout', methods=['POST'])
 @login_required

@@ -7,7 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 from flask_migrate import Migrate
-from models import User, Feedback, FeedbackRequest
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,6 +46,9 @@ db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# Import models after db initialization to avoid circular imports
+from models import User, Feedback, FeedbackRequest
 
 # Initialize database tables and seed data
 with app.app_context():
@@ -134,31 +136,19 @@ else:
 
 frontend_origin = os.environ.get('FRONTEND_ORIGIN', default_frontend)
 
-# Allow multiple origins for development and production
-allowed_origins = [frontend_origin]
+# Simple CORS configuration - allow specific origins
+allowed_origins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://team-feedback-portal.vercel.app'
+]
 
-# Always allow localhost for development
-if not is_local:
-    allowed_origins.extend([
-        'http://localhost:3000',
-        'http://localhost:3001'
-    ])
-
-# Always allow the main Vercel domain
-if 'https://team-feedback-portal.vercel.app' not in allowed_origins:
-    allowed_origins.append('https://team-feedback-portal.vercel.app')
-
-def validate_origin(origin):
-    """Custom origin validation for Vercel preview deployments"""
-    if origin in allowed_origins:
-        return True
-    # Allow any vercel.app subdomain for preview deployments
-    if origin and origin.endswith('.vercel.app') and 'team-feedback-portal' in origin:
-        return True
-    return False
+# Add the environment-specified origin if different
+if frontend_origin and frontend_origin not in allowed_origins:
+    allowed_origins.append(frontend_origin)
 
 CORS(app,
-     origins=validate_origin,
+     origins=allowed_origins,
      supports_credentials=True,
      allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
      methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
@@ -166,6 +156,39 @@ CORS(app,
 print(f"Primary frontend origin: {frontend_origin}")
 print(f"Allowed CORS origins: {allowed_origins}")
 print("Additional validation for *.vercel.app domains enabled")
+
+# Health check endpoint
+@app.route('/health', methods=['GET'])
+def health_check():
+    try:
+        return jsonify({
+            'status': 'healthy',
+            'message': 'Server is running',
+            'environment': 'local' if is_local else 'production',
+            'database_configured': bool(os.environ.get('DATABASE_URL'))
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+# Test database connection
+@app.route('/test-db', methods=['GET'])
+def test_db():
+    try:
+        from models import User
+        user_count = User.query.count()
+        return jsonify({
+            'status': 'database connected',
+            'user_count': user_count,
+            'database_url': 'configured' if os.environ.get('DATABASE_URL') else 'not configured'
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'database error',
+            'error': str(e)
+        }), 500
 
 from routes import routes
 
@@ -181,6 +204,23 @@ def not_found(e):
         return jsonify({'error': 'Not found'}), 404
     return e
 
+@app.errorhandler(500)
+def internal_error(error):
+    print(f"500 Error: {error}")
+    import traceback
+    traceback.print_exc()
+    return jsonify({'error': 'Internal server error', 'details': str(error)}), 500
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Not found'}), 404
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=False, host='0.0.0.0', port=port) 
+    try:
+        port = int(os.environ.get('PORT', 5000))
+        print(f"Starting server on port {port}")
+        app.run(debug=False, host='0.0.0.0', port=port)
+    except Exception as e:
+        print(f"Failed to start server: {e}")
+        import traceback
+        traceback.print_exc()
