@@ -41,7 +41,18 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    import os
+
+    # Get URL from environment or config
+    url = os.environ.get('DATABASE_URL') or config.get_main_option("sqlalchemy.url")
+
+    # Handle postgres:// URLs and add pg8000 driver
+    if url and ('postgresql' in url or 'postgres' in url):
+        if url.startswith('postgres://'):
+            url = url.replace('postgres://', 'postgresql://', 1)
+        if 'postgresql://' in url and '+pg8000' not in url:
+            url = url.replace('postgresql://', 'postgresql+pg8000://', 1)
+
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -60,8 +71,24 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    import os
+
+    # Get configuration and override URL if needed
+    configuration = config.get_section(config.config_ini_section, {})
+
+    # Override with environment DATABASE_URL if available
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # Handle postgres:// URLs and add pg8000 driver
+        if 'postgresql' in database_url or 'postgres' in database_url:
+            if database_url.startswith('postgres://'):
+                database_url = database_url.replace('postgres://', 'postgresql://', 1)
+            if 'postgresql://' in database_url and '+pg8000' not in database_url:
+                database_url = database_url.replace('postgresql://', 'postgresql+pg8000://', 1)
+        configuration['sqlalchemy.url'] = database_url
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

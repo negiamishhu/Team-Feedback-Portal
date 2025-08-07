@@ -21,8 +21,12 @@ if database_url and ('postgresql' in database_url or 'postgres' in database_url)
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
 
+    # Use pg8000 driver for better Python 3.13 compatibility
+    if 'postgresql://' in database_url and '+pg8000' not in database_url:
+        database_url = database_url.replace('postgresql://', 'postgresql+pg8000://', 1)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    print("Using PostgreSQL database")
+    print("Using PostgreSQL database with pg8000 driver")
 else:
     # Development: Use SQLite with relative path
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
