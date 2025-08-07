@@ -120,10 +120,52 @@ with app.app_context():
         print(f"Database initialization error: {e}")
 
 # CORS configuration
-frontend_origin = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:3000')
-CORS(app, origins=[frontend_origin], supports_credentials=True)
+# Detect if running locally or in production
+is_local = os.environ.get('FLASK_ENV') != 'production' and not os.environ.get('DATABASE_URL')
 
-print("Allowed CORS origins:", [frontend_origin])
+if is_local:
+    # Local development - use localhost
+    default_frontend = 'http://localhost:3000'
+    print("Running locally - using localhost for CORS")
+else:
+    # Production - use Vercel link
+    default_frontend = 'https://team-feedback-portal.vercel.app'
+    print("Running in production - using Vercel link for CORS")
+
+frontend_origin = os.environ.get('FRONTEND_ORIGIN', default_frontend)
+
+# Allow multiple origins for development and production
+allowed_origins = [frontend_origin]
+
+# Always allow localhost for development
+if not is_local:
+    allowed_origins.extend([
+        'http://localhost:3000',
+        'http://localhost:3001'
+    ])
+
+# Always allow the main Vercel domain
+if 'https://team-feedback-portal.vercel.app' not in allowed_origins:
+    allowed_origins.append('https://team-feedback-portal.vercel.app')
+
+def validate_origin(origin):
+    """Custom origin validation for Vercel preview deployments"""
+    if origin in allowed_origins:
+        return True
+    # Allow any vercel.app subdomain for preview deployments
+    if origin and origin.endswith('.vercel.app') and 'team-feedback-portal' in origin:
+        return True
+    return False
+
+CORS(app,
+     origins=validate_origin,
+     supports_credentials=True,
+     allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+
+print(f"Primary frontend origin: {frontend_origin}")
+print(f"Allowed CORS origins: {allowed_origins}")
+print("Additional validation for *.vercel.app domains enabled")
 
 from routes import routes
 
