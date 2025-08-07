@@ -3,12 +3,12 @@
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup database
-echo "Setting up database..."
-python setup_db.py
+# Run database migrations
+echo "Running database migrations..."
+flask db upgrade
 
-# Create a simple migration stamp
-echo "Stamping migration..."
-alembic stamp head
+# Seed the database with initial data
+echo "Seeding database..."
+python seeder.py
 
-echo "Build completed successfully!" 
+echo "Build completed successfully!"

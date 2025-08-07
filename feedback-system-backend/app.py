@@ -15,18 +15,17 @@ load_dotenv()
 app = Flask(__name__)
 
 # Database configuration for production
-if os.environ.get('DATABASE_URL') and 'postgresql' in os.environ.get('DATABASE_URL', ''):
-    # Check if psycopg2 is available for PostgreSQL
-    try:
-        import psycopg2
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    except ImportError:
-        # Fallback to SQLite if psycopg2 is not available
-        print("PostgreSQL URL provided but psycopg2 not available, using SQLite")
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
+database_url = os.environ.get('DATABASE_URL')
+if database_url and 'postgresql' in database_url:
+    # Fix for Render/Heroku postgres URLs that use postgres:// instead of postgresql://
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    print("Using PostgreSQL database")
 else:
     # Development: Use SQLite with relative path
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/feedback_system.db'
+    print("Using SQLite database")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
